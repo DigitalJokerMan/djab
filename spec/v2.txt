@@ -1,0 +1,19 @@
+dj's amazing bundle format (v2.0)
+
+The first version required two seperate files and it was pretty simple, this version should be much more advanced and flexible.
+
+magic number -- 1 byte (17 -- might change in the future)
+version identifier -- unsigned byte (currently 2)
+
+compression type -- unsigned byte (reserved; not used yet)
+
+number of entries in index -- unsigned long
+// data section beginning -- unsigned long
+
+INDEX ENTRY:
+    key -- string
+    offset (from the beginning of the data section) -- unsigned long
+    size -- unsigned long
+
+DATA SECTION:
+    self-explanatory
