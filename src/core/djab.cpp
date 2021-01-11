@@ -5,6 +5,8 @@
 namespace djab {
 
 Bundle::Bundle(std::ifstream* inputStream) : inputStream{ inputStream } {
+    assert(inputStream->is_open());
+    
     char magic;
     read(magic);
     assert(magic == MAGIC_NUMBER);

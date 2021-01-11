@@ -2,6 +2,7 @@
 #include <djab.h>
 #include <assert.h>
 #include <fstream>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -42,20 +43,20 @@ public:
         assert(dataTempFile.is_open());
 
         for (size_t i = 0; i < filesQueue.size(); i++) {
+            // Open the file.
             std::ifstream file(filesQueue[i].sourcePath);
             assert(file.is_open());
 
+            // Get file size.
             file.seekg(0, std::ios::end);
             size_t size = file.tellg();
             file.seekg(0, std::ios::beg);
-            
-            // Create a buffer and read the source file into it
-		    //char* buffer = new char[size];
-		    //file.read(buffer, size);
 
+            // Get offset.
             dataTempFile.seekp(0, std::ios::end);
             size_t offset = dataTempFile.tellp();
 
+            // Write the file into data.
             dataTempFile << file.rdbuf();
 
             write(filesQueue[i].bundleKey);
@@ -67,21 +68,14 @@ public:
 
         dataTempFile.close();
 
-        dataTempFile.seekp(0, std::ios::beg);
-
+        // Write the data into the main file.
         std::ifstream dataInput(dataTempPath);
-        /*dataInput.seekg(0, std::ios::end);
-        size_t dataSize = dataInput.tellg();
-        dataInput.seekg(0, std::ios::beg);
-
-        char* buffer = new char[dataSize];
-	    dataInput.read(buffer, dataSize);
-
-        outputStream.write(buffer, dataSize);*/
 
         outputStream << dataInput.rdbuf();
-        //outputStream.write(dataTempFile.rdbuf());
-        //outputStream << dataTempFile;
+        dataInput.close();
+        
+        // Delete the data file.
+        std::filesystem::remove(dataTempPath); // TODO: Handle errors from this.
     }
 
 private:
